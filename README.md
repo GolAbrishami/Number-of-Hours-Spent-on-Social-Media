@@ -2,7 +2,7 @@
 
 ## Overview¶
 
-Social Media has changed the way we communicate, in ways of creating a sense of urgency and a need to share, providing an inside perspective of faraway places, and making Digital messages more personal. Robert Lustig, professor at the University of Southern California and author of *The Hacking of the American Mind* said \"kids are definitely addicted. It\’s not a drug, but it might as well be. It works the same way… it has the same results.\" Also, Companies, including Google and Apple, have said they will introduce features to help parents and kids monitor and manage their time online. We feel that looking into hours spent on social media is very fitting.
+Social Media has changed the way we communicate, in ways of creating a sense of urgency and a need to share, providing an inside perspective of faraway places, and making Digital messages more personal. Robert Lustig, professor at the University of Southern California and author of *The Hacking of the American Mind* said \"kids are definitely addicted. It’s not a drug, but it might as well be. It works the same way… it has the same results.\" Also, Companies, including Google and Apple, have said they will introduce features to help parents and kids monitor and manage their time online. We feel that looking into hours spent on social media is very fitting.
 In this projerct we investigated a *linear
 relationship* between different factors and **spending hours on
 social media**. 
@@ -37,10 +37,8 @@ We investigate the relation between the independent variables and the dependent 
 ## Outcome 
 
 Given our p-value, we can say that Age and Number of Social Media Accounts, are good predictors of Hours Spend on Social Media, but we can also say that given our significantly low adjusted $R^{2}$, they are not very useful. 
-Based on our $R^{2}$, we can say that only 3% of the variation in Hours Spent on Social M
+Based on our R^{2}, we can say that only 3% of the variation in Hours Spent on Social M
 
-Taken together, **age** and **number of social media accounts** are useful  in predicting the time that a person spend in social medias per day. 
-But ***linear model*** is not a suitable model to predict number of hours spent on social media.
-We can’t ensure that the observed effect, is only caused by the variation in our predictor variables. 
+Taken together, *age* and *number of social media accounts* are useful in predicting the time that a person spends in social media per day. But the ***linear model*** is not a suitable model to predict the number of hours spent on social media. We can’t ensure that the observed effect is only caused by the variation in our predictor variables.
 
-Overall human behaivior is too complicated toOverall human behavior is too complicated to fit it into a linear model. fit it into a linear model.
+Overall human behavior is too complicated to fit it into a linear model. fit it into a linear model.
