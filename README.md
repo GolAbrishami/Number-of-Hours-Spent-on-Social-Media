@@ -1,8 +1,8 @@
 # Number of Hours Spent on Social
 
 I and my partners investigated a linear
-relationship between different factors and spending hours on
-social media. 
+relationship between different factors and *spending hours on
+social media*. 
 
 We used convenience sampling to create our
 dataset. 
