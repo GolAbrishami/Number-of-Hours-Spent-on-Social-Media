@@ -21,7 +21,7 @@ We investigate the relation between the independent variables and the dependent 
 3. Checking the linearity assumptions. 
 
 In the end, we find that **age** and **gender** have an impact on the
-spending hours on social media, but we do not have any *linear
-relationship* between the predictor
+spending hours on social media, but we do not have any ***linear
+relationship*** between the predictor
 variables and the response variable.
 
