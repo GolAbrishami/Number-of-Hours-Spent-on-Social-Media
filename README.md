@@ -41,4 +41,4 @@ Based on our R^{2}, we can say that only 3% of the variation in Hours Spent on S
 
 Taken together, *age* and *number of social media accounts* are useful in predicting the time that a person spends in social media per day. But the ***linear model*** is not a suitable model to predict the number of hours spent on social media. We can’t ensure that the observed effect is only caused by the variation in our predictor variables.
 
-Overall human behavior is too complicated to fit it into a linear model. fit it into a linear model.
+Overall human behavior is too complicated to fit it into a linear model.
