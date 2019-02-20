@@ -2,8 +2,8 @@
 
 ## Overview¶
 
-Social Media has changed the way we communicate, in ways of creating a sense of urgency and a need to share, providing an inside perspective of faraway places, and making Digital messages more personal. Robert Lustig, professor at the University of Southern California and author of *The Hacking of the American Mind* said \"kids are definitely addicted. It’s not a drug, but it might as well be. It works the same way… it has the same results.\" Also, Companies, including Google and Apple, have said they will introduce features to help parents and kids monitor and manage their time online. We feel that looking into hours spent on social media is very fitting.
-In this projerct we investigated a *linear
+Social Media has changed the way we communicate, in ways of creating a sense of urgency and a need to share, providing an inside perspective of faraway places, and making Digital messages more personal. Robert Lustig,a professor at the University of Southern California and author of *The Hacking of the American Mind* said \"kids are definitely addicted. It’s not a drug, but it might as well be. It works the same way… it has the same results.\" Also, Companies, including Google and Apple, have said they will introduce features to help parents and kids monitor and manage their time online. We feel that looking into hours spent on social media is very fitting.
+In this project, we investigated a *linear
 relationship* between different factors and **spending hours on
 social media**. 
 
