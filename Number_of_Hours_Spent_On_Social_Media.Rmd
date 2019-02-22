@@ -1,16 +1,16 @@
 ---
-title: "Final Project"
-author: "Rashi Saxena, Ada Niu, and Golnaz Abrishami"
+title: "Spending time on scial medias' predictors"
+author: "Golnaz Abrishami, Ada Niu, and Rashi Saxena"
 date: "11/26/2018"
 output:
   html_document:
     fit_height: 4
     fit_width: 4
     number_sections: no
-    theme: cosmo
+    theme: paper
     toc: yes
     toc_float:
-      collapsed: no
+      collapsed: yes
   pdf_document:
     toc: yes
 ---
@@ -22,76 +22,194 @@ library(lattice)
 library(ggplot2)
 library(dplyr)
 library(scatterplot3d)
-#install.packages("car")
+library(cowplot)
+library(knitr)
+library(kableExtra)
 library(car)
-```
-# Data Cleaning 
 
-1. Reading the file and creating model for Responde variable which is the time that people spend on social media per day.
-```{r,echo=FALSE}
+```
+
+
+Social Media has changed the way we communicate, in ways of creating a sense of urgency and a need to share, providing an inside perspective of faraway places, and making Digital messages more personal. Robert Lustig, professor at the University of Southern California and author of *The Hacking of the American Mind* said \"kids are definitely addicted. It’s not a drug, but it might as well be. It works the same way… it has the same results.\" Also, Companies, including Google and Apple, have said they will introduce features to help parents and kids monitor and manage their time online. We feel that looking into hours spent on social media is very fitting.
+
+We conduct our own survey to collect the data we are interested. Convienence sampling method is conducted intend to generalize our sample to the population. For instance, posting surveys on facebook, and passing out to friends and families. Large Sample normal distribution can be applied since our sample size is greater than 30.
+
+# 1.Data wrangling  
+
+Reading the file and creating model for Responde variable which is the time that people spend on social media per day.
+
+```{r}
 SM=read.csv("SM.csv")
 str(SM)
 ```
 
-2. Deleting Nulls
-```{r,echo=FALSE}
+
+
+### Deleting Nulls
+
+```{r}
 dim(SM)
 SM = SM[complete.cases(SM), ]
 dim(SM)
 ```
-3. Ploting Pairs Plot for comparation:
 
-```{r,echo=FALSE}
-pairs(HPD~age+NSM,data=SM, main = "Pair Plot",
-      pch = 21,bg = c("red", "royalblue", "green3"))
+### Ploting 
+
+```{r}
+pairs(HPD~age+NSM,data=SM, main = "Pair Plot -- Based on Marital Status",
+      pch = 21,bg = c("yellow","pink")[as.numeric(SM$marital_status)])
+par(xpd=TRUE)
+legend(0.37, 0.05, as.vector(unique(SM$marital_status)),  
+       fill=c( "yellow","pink"),box.lty=0,cex=0.9,ncol=3)
+
 ```
+
 Apperantly there is no linear relatioship, but we see potential outliers in Number of social media account that can impact our dataset.
 
-```{r,echo=FALSE}
+```{r, echo=FALSE}
+theme_improve <- function(my_plot, title_color= 'brown',
+                           title_size= 2, axis_title_size=1.5,
+                           axis_text_size=1.3,
+                           x_axis_text_angle=30) {
+  my_plot = my_plot +
+  theme(plot.title = element_text(size = rel(title_size),
+                                  color = title_color),
+        axis.title.y = element_text(size = rel(axis_title_size)),
+        axis.title.x = element_text(size = rel(axis_title_size)),
+        axis.text.x = element_text(size = rel(axis_text_size),
+                                   angle = x_axis_text_angle),
+        axis.text.y = element_text(size = rel(axis_text_size))
+        )
+  return(my_plot)
+}
+```
+
+
+```{r}
 SM %>%
   ggplot(aes(factor(NSM),HPD))+
   geom_boxplot(outlier.colour="red",
                 outlier.size=2) +
   xlab("Number of Social Media Account") +
   ylab("Hours Per Day") +
-  ggtitle("Boxplot")
+  ggtitle("We have some anomaly in the number of social media account")
 ```
 
-After Ploting a boxplot we see some anomaly in number of social media account besides the potenial outliers. 
-So, we checked our dataset and figured out that this anomaly derives from incorrect data-a few people have written their phone numbers in the number of social media accounts column. We also notice a boxplot for 0 social media accounts, which could be puzzling. The reason for this is because when we sent our survey out, we had only accounted for Facebook, Instagram, Pinterest, and Snapchat as our social media platforms, but to some of our responders count WhatsApp, WeChat, and Reddit as social media accounts so they entered 0 for the the number of social media accounts we asked for, and entered the number of hours they spend on social media using other platforms. Let's clean our data. 
+ 
 
-```{r,echo=FALSE}
+```{r}
+SM_A <- SM %>% group_by(NSM) %>%
+  summarize(HPD=median(HPD))
+kable(SM_A) %>%
+  kable_styling(full_width = F,bootstrap_options = "striped",position = "float_right") %>%
+  row_spec(c(1,10:13), bold = T, color = "white", background = "#D7261E")
+```
+
+After plotting a boxplot we see some anomaly in the number of social media accounts besides the potential outliers.
+
+So, we checked our dataset and figured out that this anomaly derives from incorrect data, few people have written their phone numbers in the number of social media accounts column. We also notice a boxplot for having no social media accounts, which could be puzzling. The reason for this is because when we sent our survey out, we had only accounted for Facebook, Instagram, Pinterest, and Snapchat as our social media platforms, but to some of our responders count WhatsApp, WeChat, and Reddit as social media accounts so they entered 0 for the number of social media accounts we asked for and entered the number of hours they spend on social media using other platforms. Let's clean our data.
+
+```{r}
+
 for(i in c(nrow(SM):1)){
   if(SM$NSM[i]>10 || SM$NSM[i]==0 || SM$age[i]>90){
     SM=SM[-c(i),]
   }
 }
 dim(SM)
+
 ```
 
-# Clean Data Visuals
+# 2. Data Exploration 
 
-```{r,echo=FALSE}
+```{r}
 pairs(HPD~as.numeric(age)+NSM,data=SM, main = "Pair Plot -- Based on Gender",
-      pch = 21,bg = c("red", "royalblue", "green3")[unclass(SM$Sex)])
+      pch = 21,bg = c("red","royalblue","yellow")[as.numeric(SM$gender)])
+ par(xpd=TRUE)
+legend(0.39, 0.05, as.vector(unique(SM$gender)),  
+       fill=c("red","royalblue","yellow"),box.lty=0,cex=0.8,ncol=3)
 ```
 Now we have a better observations. Let's build a model. 
 
 Let's take a look at our cleaner version of the boxplot 
-```{r,echo=FALSE}
-SM %>%
-  ggplot(aes(factor(NSM),HPD))+
-  geom_boxplot(outlier.colour="red",
-                outlier.size=2) +
-  xlab("Number of Social Media Account") +
-  ylab("Hours Per Day") +
-  ggtitle("Boxplot")
+
+
+
+
+```{r}
+violin_plot <- ggplot(SM, aes(as.factor(NSM),HPD, fill=as.factor(NSM))) +
+  geom_boxplot(width = 0.3, lwd = 1.3, outlier.size = 3) +
+  geom_violin(alpha = 0.4) +
+  theme(legend.position = "none")
+
+quality_plt <- violin_plot +
+  labs(title="Checking Density and Distribution",
+       y="Spending Time on Social Media(pH)",
+       x="Number of Social Media Accounts") +
+  theme(plot.title= element_text(size=rel(1.7)),
+        axis.title.x= element_text(size=rel(1.4)),
+        axis.title.y= element_text(size=rel(1.3)),
+        axis.text.y= element_text(angle=30, size = rel(1.1)))
+
+
+quality_plt + scale_fill_brewer(palette = "Set2")
 
 ```
 
-# Model 1
+We have a Gaussian distribution for people who have only one social account, and people roughly spend two hours a day on social media.
 
-```{r,echo=FALSE}
+```{r}
+SM_M = mutate(SM, age = cut_number(SM$age,7))
+
+SM_agg <- SM_M %>% group_by(NSM,age) %>%
+  summarize(HPD=median(HPD))
+
+
+```
+
+
+```{r}
+myplt1 <- ggplot(SM_agg, aes( age ,NSM, fill= HPD))
+(myplt1 +
+  geom_raster() +
+  scale_fill_distiller(palette = "RdYlGn") +
+  scale_x_discrete("Age",
+                   labels = c("20 - 25", "25 - 27.3", "27.3 - 31", "31 - 36",
+                              "36 - 46", "46 - 53.9", "53.9 - 69")) +
+  labs(title="What makes a person spent a long time on social media?",y="Number of Social Media Accounts",
+       fill="Hours per Day")) 
+```
+
+```{r}
+plot.gender <- ggplot(SM, aes(HPD, NSM)) +
+  geom_point() +
+  facet_grid(. ~ gender) +
+  stat_smooth(method = "lm") +
+  background_grid(major = 'y', minor = "none")+
+  panel_border() 
+
+plot.status <- ggplot(SM, aes(x =HPD , y = NSM, color=factor(marital_status))) + 
+  geom_point(size=2.5)
+
+plot_grid(plot.gender, plot.status, labels = "AUTO", ncol = 1) 
+```
+
+We see that people's *gender* has not a powerful impact on how many social media account they have and how much time they spend on it. However, not considering some outliers, we can see *single* people spend more time on social media.
+
+# 3. Creating Models
+
+## Model One
+
+$H_0:\beta_1 = \beta_2 = 0\\H_a:\beta_1 = \beta_2 \neq 0$
+
+- Responsive variable:<br>
+1. hours spent on social media
+
+- Predictor Variables:
+1. age
+2. number of social media accounts
+
+```{r}
 m1= lm(HPD~NSM+as.numeric(age),data=SM)
 summary(m1)
 
@@ -101,28 +219,56 @@ We see a pretty low R squared, so let's see we have some influential outliers. S
 
 Maybe it is time for us to try a new model with the other variables available to us. 
 
-# Model 2
-```{r,echo=FALSE} 
+## Model Two
+
+- Responsive variable:<br>
+1. hours spent on social media
+
+- Predictor Variables:
+1. age
+2. gender
+3. occupation
+4. marital_status
+5. education
+
+```{r} 
 m2 <- lm(HPD~as.numeric(age) + NSM + as.factor(gender) + as.factor(occupation)+ as.factor(marital_status) + as.factor(education), data =SM)
 summary(m2)
 ```
 
 Using this model, we see a slight improvement in our R sqaured, but also notice our pvalue increases, which shows that our current predictors do not have a relationship with number of hours on social media per day. Given the p values of the different variables, we notice that only age, number of social media per hours, and the gender(male specifically) shows a p value of less than .05. 
 
-# Model 3
+
+## Model Three
+
+- Responsive variable:<br>
+1. hours spent on social media
+
+- Predictor Variables:
+1. age
+2. gender
+3. number of social media accounts
 
 Here, let's use only age, gender, and number of social media accounts. 
 
-```{r,echo=FALSE}
+```{r}
 
 m3 <- lm(HPD~NSM+as.numeric(age)+as.factor(gender), data =SM)
 summary(m3)
 ```
 Using this model, we notice a slight jump in Rsquared, but also a very low p value. We can also notice that number of social media accounts, has a high p value, so it might be interesting to look at a model with just age and gender as the predictor variables. 
 
-# Model 4
+## Model Four
 
-```{r,echo=FALSE}
+- Responsive variable:<br>
+hours spent on social media
+
+- Predictor Variables:
+1. age
+2. gender
+
+
+```{r}
 
 m4 <- lm(HPD~ as.numeric(age)+as.factor(gender), data = SM) 
 
@@ -131,18 +277,28 @@ summary(m4)
 
 Our R squared is still pretty low so let's check for any outliers, correlation between coefficients, and linear assumptions. 
 
-# Analyzing 
+# 4. Analyzing 
 
-```{r, echo=FALSE}
-cook=cooks.distance(m4)
-plot(cook)
+Checking outliers to see if they are influentioal 
+
+```{r}
+cook1=cooks.distance(m1)
+cook2=cooks.distance(m2)
+cook3=cooks.distance(m3)
+cook4=cooks.distance(m4)
+
+par(mfrow=c(2,2))
+plot(cook1,pch=16,col="Royalblue",main="Model 1 has no Influential outliers")
+plot(cook2,pch=16,col="Royalblue",main="Model 2 has no Influential outliers")
+plot(cook3,pch=16,col="Royalblue",main="Model 3 has no Influential outliers")
+plot(cook4,pch=16,col="Royalblue",main="Model 4 has no Influential outliers")
 
 ```
 According to plot we do not have any observation with coock distance greater than one. So, none of the outliers are influential and we can keep them.
 
 Let's see if we have a way of finding some correlation betweek coefficients, meaning that two predictor variables are correlated. Let's check the variance inflation factors for this two predictors.
 
-```{r, echo=FALSE}
+```{r}
 vif(m4)
 ```
 
@@ -150,16 +306,18 @@ We notice that our variance influence factor values are close to 1, which means 
 
 Let's check for linear assumptions
 
-```{r,echo=FALSE}
+```{r}
 plot(m4)
 
 ```
-We can eee inequality of the variance from the Residual plot. 
+We can see inequality of the variance from the Residual plot. 
 
 We can also see from the NOrmal Q-Q plot does not follow a normal distribution. 
 
 Let's check visually if there is any linear relationship between the predictor variables and response variable. 
-```{r, echo=FALSE}
+
+
+```{r}
 
 HPD <- SM$HPD
 
@@ -172,14 +330,35 @@ scatterplot3d(HPD,age,gender,  pch=16, highlight.3d=TRUE, main="3D Scatterplot")
 ````
 From our 3D scatterplot, we can clearly see that there is no linear relationship between our predictor variables and response variable. 
 
-# Conclusion 
 
-Given our p-value, we can say that Age and Number of Social Media Accounts, are good predictors of Hours Spend on Social Media, but we can also say that given our significantly low adjusted R squared, they are not very useful. Let's look at the linear plots to see if our model meets the assumptions. 
 
-Based on our R^sqaured, we can say that only 3% of the variation in Hours Spent on Social Media is explained by Age and Numbe of Social Media Accounts. 
+```{r}
+plt <- ggplot(SM, aes(age,HPD))
+plt +
+  geom_point(aes(color=factor(marital_status))) +
+    geom_smooth(se=FALSE, color="darkred", method="lm") +
+  labs(title="Checking Density and Distribution",
+       y="Spending Time on Social Media(pH)",
+       x="Age") +
+    geom_rug(alpha=0.5, color="darkred")
+```
 
-We can say that there is a very weak linear relationship between our response and predictor variables. 
 
+# 5. Conclusion 
+
+Given our p-value, we can say that Age and Number of Social Media Accounts, are good predictors of Hours Spend on Social Media, but we can also say that given our significantly low adjusted $R^{2}$, they are not very useful. Based on our $R^{2}$, we can say that only 3% of the variation in Hours Spent on Social Media is explained by Age and Numbe of Social Media Accounts.
+
+Taken together, age and number of social media accounts are useful in predicting the time that a person spend in social medias per day. But model is not an accurate model to predict number of hours spent on social media as there is no linear relationship. We cannot ensure that the observed effect, is only caused by the variation in our predictor variables .
+
+
+# 6. Research Limitations and Further Topics
+
+1. We want to look into other methods besides linear regression.
+2. We want to increase our data size. 
+3. We want to look into more variables that might be more useful for the model:
+    * Gender
+    * Education
+    * Occupation
 
 
 
